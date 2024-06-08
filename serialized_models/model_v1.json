@@ -1,0 +1,28 @@
+{
+    "training_hyperparameters": {
+        "learning_rate": 0.0001,
+        "num_epochs": 50,
+        "batch_size": 32
+    },
+    "model_hyperparameters": {
+        "embedding_size": 128,
+        "num_enc_layers": 3,
+        "num_dec_layers": 3,
+        "token_limit": 32,
+        "dim_feedforward": 16,
+        "num_heads": 8,
+        "dropout": 0.1,
+        "device": "cpu"
+    },
+    "model_architecture": {
+        "num_params": 839809,
+        "num_layers": 99
+    },
+    "other": {
+        "subset_ratio": 0.01,
+        "model_path": "./serialized_models/model_v1",
+        "train_dataset_path": "./datasets/train_dataset_32.pkl",
+        "test_dataset_path": "./datasets/test_dataset_32.pkl",
+        "corpus_path": "./raw_data/"
+    }
+}

@@ -166,6 +166,15 @@ def get_dataset_splits(
     return train_dataset, test_dataset
 
 
+def get_subset(dataset: Dataset, ratio: float) -> Dataset:
+    """Get a random subset of a dataset."""
+    fields = dataset.fields
+    dataset = list(dataset)
+    random.shuffle(dataset)
+    dataset = dataset[: int(len(dataset) * ratio)]
+    return Dataset(dataset, fields)
+
+
 def _decode(tensor: torch.Tensor, lang: Field) -> list[str]:
     decoded_tokens = [lang.vocab.itos[i] for i in tensor]
     while "<bos>" in decoded_tokens:
@@ -177,8 +186,11 @@ def _decode(tensor: torch.Tensor, lang: Field) -> list[str]:
     return decoded_tokens
 
 
-def _translate(model, tokens, src_lang, tgt_lang, device, token_limit):
+def translate(model, tokens, src_lang, tgt_lang, device, token_limit):
     tokens = [src_lang.init_token] + tokens + [src_lang.eos_token]
+    if len(tokens) > token_limit:
+        print("Token limit exceeded.")
+        return
     src = [src_lang.vocab.stoi[token] for token in tokens]
     src = torch.LongTensor(src).unsqueeze(1).to(device)
     outs = [tgt_lang.vocab.stoi["<bos>"]]
@@ -208,7 +220,7 @@ def random_eval(
         ri = random.randint(0, len(dataset) - 1)
         src_tokens = list(dataset.src)[ri]
         tgt_tokens = list(dataset.tgt)[ri]
-        prd_tokens = _translate(
+        prd_tokens = translate(
             token_limit=token_limit,
             src_lang=src_lang,
             tgt_lang=tgt_lang,
